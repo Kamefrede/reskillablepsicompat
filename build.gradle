@@ -1,0 +1,101 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url = "https://files.minecraftforge.net/maven" }
+    }
+    dependencies {
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'idea'
+apply plugin: 'java'
+
+version = mod_version
+group = mod_author + "." + mod_name
+archivesBaseName = mod_name
+
+ext.mod_name = mod_name.toLowerCase()
+ext.capitalized_name = mod_name.capitalize()
+ext.mod_fancy_name = project.hasProperty("mod_fancy_name") ? project.mod_fancy_name : ext.capitalized_name
+ext.mod_author = mod_author.toLowerCase()
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+minecraft {
+    version = project.mc_version + "-" + project.forge_version
+    mappings = project.mcp_version
+    runDir = "run"
+    useDepAts = true
+
+    replaceIn "RSPCompat.java"
+    replaceIn "mcmod.info"
+
+    replace "%VERSION%", project.mod_version
+
+    if(project.hasProperty("mc_uuid"))
+        clientRunArgs += ["--uuid", project.mc_uuid]
+
+    if(project.hasProperty("mc_username"))
+        clientRunArgs += ["--username", project.mc_username]
+
+
+}
+
+idea {
+    module {
+        excludeDirs += [file("run"), file("out"), file("gradle"), file(".idea")]
+    }
+
+    if (it.project != null)
+        project {
+            jdkName = '1.8'
+            languageLevel = '1.8'
+        }
+}
+
+tasks.withType(JavaCompile).all {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
+jar {
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile files ("libs/Psi-r1.1-63.jar")
+    compile files ("libs/AutoRegLib-1.3-24")
+    compile files ("libs/Reskillable-1.12.2-1.10.0")
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "forge_version", project.forge_version
+    inputs.property "mc_version", project.mc_version
+    inputs.property "mod_id", project.mod_name
+    inputs.property "mod_name", project.mod_fancy_name
+    inputs.property "description", project.hasProperty("mod_description") ? project.mod_description : ""
+    inputs.property "author", project.mod_author
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info", "pack.mcmeta"
+        expand "version": project.version,
+                "forge_version": project.forge_version,
+                "mc_version": project.mc_version,
+                "mod_id": project.mod_name,
+                "mod_name": project.hasProperty("mod_fancy_name") ? project.mod_fancy_name : project.mod_name,
+                "description": project.hasProperty("mod_description") ? project.mod_description : "",
+                "author": project.mod_author
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info", "pack.mcmeta"
+    }
+}
+
