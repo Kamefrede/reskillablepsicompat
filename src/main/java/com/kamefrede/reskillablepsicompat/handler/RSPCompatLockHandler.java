@@ -1,6 +1,8 @@
 package com.kamefrede.reskillablepsicompat.handler;
 
+import codersafterdark.reskillable.api.data.RequirementHolder;
 import codersafterdark.reskillable.base.ConfigHandler;
+import codersafterdark.reskillable.base.LevelLockHandler;
 import codersafterdark.reskillable.network.MessageLockedItem;
 import com.kamefrede.reskillablepsicompat.RSPCompat;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,23 +14,38 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import vazkii.psi.api.cad.EnumCADComponent;
 import vazkii.psi.api.cad.ICAD;
 import vazkii.psi.api.cad.ICADComponent;
+import vazkii.psi.api.cad.PostCADCraftEvent;
 import vazkii.psi.api.spell.PreSpellCastEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static codersafterdark.reskillable.base.LevelLockHandler.*;
 
 @Mod.EventBusSubscriber(modid = RSPCompat.MODID)
 public class RSPCompatLockHandler {
 
+    @SubscribeEvent()
+    public static void craftEvent(PostCADCraftEvent event) {
+        ICAD icad = (ICAD) event.getCad().getItem();
+        ItemStack cad = event.getCad();
+        List<RequirementHolder> holders = new ArrayList<>();
+        if (LevelLockHandler.getSkillLock(cad) != EMPTY_LOCK) {
+            holders.add(LevelLockHandler.getSkillLock(cad));
+        }
+        for (EnumCADComponent type : EnumCADComponent.values()) {
+            ItemStack component = icad.getComponentInSlot(cad, type);
+            if (!component.isEmpty() && component.getItem() instanceof ICADComponent) {
+                holders.add(LevelLockHandler.getSkillLock(component));
+            }
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void preSpellCastEvent(PreSpellCastEvent event) {
         ICAD icad = (ICAD) event.getCad().getItem();
         ItemStack cad = event.getCad();
-        for (EnumCADComponent type : EnumCADComponent.values()) {
-            ItemStack component = icad.getComponentInSlot(cad, type);
-            if (!component.isEmpty() && component.getItem() instanceof ICADComponent && !event.getPlayer().world.isRemote) {
-                genericEnforce(event, event.getPlayer(), component, MessageLockedItem.MSG_ITEM_LOCKED, cad);
-            }
-        }
+        genericEnforce(event, event.getPlayer(), cad, MessageLockedItem.MSG_ITEM_LOCKED, cad);
     }
 
     //copypasta from LevelLockHandler just to add a line
