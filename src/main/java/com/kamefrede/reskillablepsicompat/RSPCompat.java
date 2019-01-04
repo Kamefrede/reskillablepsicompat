@@ -1,8 +1,14 @@
 package com.kamefrede.reskillablepsicompat;
 
+import codersafterdark.reskillable.base.LevelLockHandler;
+import com.kamefrede.reskillablepsicompat.cadlocks.CadLockKey;
+import com.kamefrede.reskillablepsicompat.util.RSPConfigHandler;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,5 +28,17 @@ public class RSPCompat {
     public void easterEggInit(FMLInitializationEvent event) {
         LOGGER.info("Hey PSIdeas, let's take over the world!");
     }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        LevelLockHandler.registerLockKey(ItemStack.class, CadLockKey.class);
+    }
+
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        RSPConfigHandler.init(event.getSuggestedConfigurationFile());
+    }
+
+
 
 }

@@ -72,8 +72,8 @@ repositories {
 }
 
 dependencies {
-    compile files ("libs/Psi-r1.1-64.jar")
-    compile "vazkii.autoreglib:AutoRegLib:${project.arl_version}"
+    compile files ("libs/Psi-r1.1-65.jar")
+    compile files ("libs/AutoRegLib-1.3-24")
     deobfCompile "codersafterdark.reskillable:Reskillable:1.12.2-1.10.0-SNAPSHOT.104"
 }
 
