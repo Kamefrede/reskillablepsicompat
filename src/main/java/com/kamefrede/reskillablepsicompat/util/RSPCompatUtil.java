@@ -13,21 +13,37 @@ import java.util.List;
 public class RSPCompatUtil {
 
     public static void addRequirement(List<Requirement> requirements, Requirement requirement) {
+        boolean isSkill = false;
         if (requirement == null || requirement instanceof TrueRequirement) {
             return;
         }
-        for (int i = 0; i < requirements.size(); i++) {
-            RequirementComparision match = requirements.get(i).matches(requirement);
-
-            if (!match.equals(RequirementComparision.NOT_EQUAL) && requirement instanceof SkillRequirement && requirements.get(i) instanceof SkillRequirement) {
-                SkillRequirement req = (SkillRequirement) requirements.get(i);
-                SkillRequirement other = (SkillRequirement) requirement;
-                requirements.remove(i);
-                requirements.add(new SkillRequirement(req.getSkill(), req.getLevel() + other.getLevel()));
+        for (Requirement req : requirements) {
+            RequirementComparision match = req.matches(requirement);
+            if (!match.equals(RequirementComparision.NOT_EQUAL) && req instanceof SkillRequirement && requirement instanceof SkillRequirement) {
+                isSkill = true;
+                addSkillRequirement(requirements, (SkillRequirement) req, (SkillRequirement) requirement);
+                break;
+            }
+            switch (match) {
+                case EQUAL_TO:
+                    return;
+                case LESS_THAN:
+                    requirements.remove(req);
+                    break;
+                case GREATER_THAN:
+                    return;
             }
         }
-        requirements.add(requirement);
+        if (!isSkill)
+            requirements.add(requirement);
     }
+
+    private static void addSkillRequirement(List<Requirement> requirements, SkillRequirement requirement, SkillRequirement other) {
+        requirements.remove(requirement);
+        requirements.add(new SkillRequirement(requirement.getSkill(), requirement.getLevel() + other.getLevel()));
+    }
+
+
 
     public static void addCadLock(LockKey key, RequirementHolder holder) {
         LevelLockHandler.addLockByKey(key, holder);

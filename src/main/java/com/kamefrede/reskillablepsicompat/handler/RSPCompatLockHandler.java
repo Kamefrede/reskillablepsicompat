@@ -56,20 +56,7 @@ public class RSPCompatLockHandler {
 
     public static void takeEnforce(Event event, EntityPlayer player, ItemStack stack, String lockMessage) {
         if (RSPConfigHandler.disableTaking) {
-            if (!event.isCancelable() || event.isCanceled() || player == null || stack == null || stack.isEmpty() || (!ConfigHandler.enforceOnCreative && player.isCreative())) {
-                return;
-            }
-            if (ConfigHandler.enforceFakePlayers) {
-                if (!canPlayerUseItem(player, stack)) {
-                    event.setCanceled(true);
-                    if (!isFake(player)) {
-                        tellPlayer(player, stack, lockMessage);
-                    }
-                }
-            } else if (!isFake(player) && !canPlayerUseItem(player, stack)) {
-                tellPlayer(player, stack, lockMessage);
-                event.setCanceled(true);
-            }
+            genericEnforce(event, player, stack, lockMessage);
         }
     }
 }
