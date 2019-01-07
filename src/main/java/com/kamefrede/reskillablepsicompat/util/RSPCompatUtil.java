@@ -18,6 +18,7 @@ public class RSPCompatUtil {
         if (requirement == null || requirement instanceof TrueRequirement) {
             return;
         }
+        reqloop:
         for (Requirement req : requirements) {
             RequirementComparision match = req.matches(requirement);
             if (!match.equals(RequirementComparision.NOT_EQUAL) && req instanceof SkillRequirement && requirement instanceof SkillRequirement) {
@@ -27,12 +28,11 @@ public class RSPCompatUtil {
             }
             switch (match) {
                 case EQUAL_TO:
+                case GREATER_THAN:
                     return;
                 case LESS_THAN:
                     requirements.remove(req);
-                    return;
-                case GREATER_THAN:
-                    return;
+                    break reqloop;
             }
         }
         if (!isSkill)
@@ -49,8 +49,9 @@ public class RSPCompatUtil {
                 requirements.add(new SkillRequirement(skill, cap));
             else
                 requirements.add(new SkillRequirement(skill, level));
-        }
-        requirements.add(new SkillRequirement(skill, level));
+        } else
+            requirements.add(new SkillRequirement(skill, level));
+
     }
 
 
