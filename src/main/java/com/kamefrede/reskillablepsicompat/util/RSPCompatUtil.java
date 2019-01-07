@@ -14,30 +14,23 @@ import java.util.List;
 public class RSPCompatUtil {
 
     public static void addRequirement(List<Requirement> requirements, Requirement requirement) {
-        boolean isSkill = false;
         if (requirement == null || requirement instanceof TrueRequirement) {
             return;
         }
+        boolean isSkill = requirement instanceof SkillRequirement;
         for (Requirement req : requirements) {
             RequirementComparision match = req.matches(requirement);
             if (match != RequirementComparision.NOT_EQUAL) {
-                if (req instanceof SkillRequirement && requirement instanceof SkillRequirement) {
-                    isSkill = true;
+                if (isSkill && req instanceof SkillRequirement) {
                     addSkillRequirement(requirements, (SkillRequirement) req, (SkillRequirement) requirement);
-                    break;
-                } else {
-                    if (match == RequirementComparision.EQUAL_TO || match == RequirementComparision.GREATER_THAN)
-                        return;
-                    else if (match == RequirementComparision.LESS_THAN) {
-                        requirements.remove(req);
-                        break;
-                    }
+                } else if (match == RequirementComparision.LESS_THAN) {
+                    requirements.remove(req);
+                    requirements.add(requirement);
                 }
+                return;
             }
-
         }
-        if (!isSkill)
-            requirements.add(requirement);
+        requirements.add(requirement);
     }
 
     private static void addSkillRequirement(List<Requirement> requirements, SkillRequirement requirement, SkillRequirement other) {
