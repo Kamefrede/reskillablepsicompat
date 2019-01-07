@@ -18,22 +18,23 @@ public class RSPCompatUtil {
         if (requirement == null || requirement instanceof TrueRequirement) {
             return;
         }
-        reqloop:
         for (Requirement req : requirements) {
             RequirementComparision match = req.matches(requirement);
-            if (!match.equals(RequirementComparision.NOT_EQUAL) && req instanceof SkillRequirement && requirement instanceof SkillRequirement) {
-                isSkill = true;
-                addSkillRequirement(requirements, (SkillRequirement) req, (SkillRequirement) requirement);
-                break;
+            if (match != RequirementComparision.NOT_EQUAL) {
+                if (req instanceof SkillRequirement && requirement instanceof SkillRequirement) {
+                    isSkill = true;
+                    addSkillRequirement(requirements, (SkillRequirement) req, (SkillRequirement) requirement);
+                    break;
+                } else {
+                    if (match == RequirementComparision.EQUAL_TO || match == RequirementComparision.GREATER_THAN)
+                        return;
+                    else if (match == RequirementComparision.LESS_THAN) {
+                        requirements.remove(req);
+                        break;
+                    }
+                }
             }
-            switch (match) {
-                case EQUAL_TO:
-                case GREATER_THAN:
-                    return;
-                case LESS_THAN:
-                    requirements.remove(req);
-                    break reqloop;
-            }
+
         }
         if (!isSkill)
             requirements.add(requirement);
