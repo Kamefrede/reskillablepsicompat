@@ -6,6 +6,7 @@ import codersafterdark.reskillable.api.requirement.Requirement;
 import codersafterdark.reskillable.api.requirement.RequirementComparision;
 import codersafterdark.reskillable.api.requirement.SkillRequirement;
 import codersafterdark.reskillable.api.requirement.logic.TrueRequirement;
+import codersafterdark.reskillable.api.skill.Skill;
 import codersafterdark.reskillable.base.LevelLockHandler;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class RSPCompatUtil {
                     return;
                 case LESS_THAN:
                     requirements.remove(req);
-                    break;
+                    return;
                 case GREATER_THAN:
                     return;
             }
@@ -40,7 +41,16 @@ public class RSPCompatUtil {
 
     private static void addSkillRequirement(List<Requirement> requirements, SkillRequirement requirement, SkillRequirement other) {
         requirements.remove(requirement);
-        requirements.add(new SkillRequirement(requirement.getSkill(), requirement.getLevel() + other.getLevel()));
+        int level = requirement.getLevel() + other.getLevel();
+        int cap = requirement.getSkill().getCap();
+        Skill skill = requirement.getSkill();
+        if (RSPConfigHandler.clampInheritanceLevel && RSPConfigHandler.enableInheritance) {
+            if (level >= cap)
+                requirements.add(new SkillRequirement(skill, cap));
+            else
+                requirements.add(new SkillRequirement(skill, level));
+        }
+        requirements.add(new SkillRequirement(skill, level));
     }
 
 

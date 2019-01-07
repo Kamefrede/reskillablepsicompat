@@ -15,11 +15,11 @@ import java.util.List;
 
 import static codersafterdark.reskillable.base.LevelLockHandler.getSkillLock;
 
-public class CadLockKey implements ParentLockKey {
+public class CadLockInheritanceKey implements ParentLockKey {
 
     private ItemStack stack;
 
-    public CadLockKey(ItemStack stack) {
+    public CadLockInheritanceKey(ItemStack stack) {
         this.stack = stack;
     }
 

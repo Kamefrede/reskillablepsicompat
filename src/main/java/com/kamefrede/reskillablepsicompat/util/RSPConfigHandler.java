@@ -16,6 +16,8 @@ public class RSPConfigHandler {
 
     public static boolean disableTaking = true;
     public static boolean disableCasting = true;
+    public static boolean enableInheritance = true;
+    public static boolean clampInheritanceLevel = true;
 
 
     public static void init(File configFile) {
@@ -28,6 +30,8 @@ public class RSPConfigHandler {
     static String comment = "This addon adds compatibility between PSI and Reskillable and it does so in the following way:\n"
             + "The CADs now inherit the skill value of their respective components. For example, if you craft a CAD with an Iron Assembly and "
             + " you've set the Iron Assembly to require 10 magic, the CAD will require 10 Magic + whatever you set psi:cad to require. \n"
+            + "For the above to be true enableInheritance has to be set to true, else, the cad will simply have the stats of the \n"
+            + "highest of the components. \n"
             + "To actually set the component requirement values you need to do so in the Reskillable.cfg file.\n"
             + "You can also mix and match skill requirements and advancements to lock the items.\n\n"
             + "Bellow you'll find options to toggle certain kinds of enforcements the CAD must obey.\n";
@@ -35,6 +39,8 @@ public class RSPConfigHandler {
     public static void load() {
         disableTaking = loadPropBool("Disable taking the CAD", "If this option is enabled the player will not be able to take their CADs from the CAD assembler unless they met the set requirements for it.", disableTaking);
         disableCasting = loadPropBool("Disable casting the CAD", "If this option is enabled the player will not be able to cast a spell unless they meet the CAD's requirements", disableCasting);
+        enableInheritance = loadPropBool("Disable CAD Component inheritance", "If this option is enabled the CADs will inherit all the requirements from the components, not only the highest", enableInheritance);
+        clampInheritanceLevel = loadPropBool("Clamp Inheritance level", "If this option is enable the sum of the inheritance of the components will never go above the skill's max level", clampInheritanceLevel);
 
 
         if (config.hasChanged()) {

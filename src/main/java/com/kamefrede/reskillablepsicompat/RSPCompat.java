@@ -1,7 +1,8 @@
 package com.kamefrede.reskillablepsicompat;
 
 import codersafterdark.reskillable.base.LevelLockHandler;
-import com.kamefrede.reskillablepsicompat.cadlocks.CadLockKey;
+import com.kamefrede.reskillablepsicompat.cadlocks.CadLockInheritanceKey;
+import com.kamefrede.reskillablepsicompat.cadlocks.CadLockNonInheritanceKey;
 import com.kamefrede.reskillablepsicompat.util.RSPConfigHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
@@ -31,7 +32,11 @@ public class RSPCompat {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        LevelLockHandler.registerLockKey(ItemStack.class, CadLockKey.class);
+        if (RSPConfigHandler.enableInheritance)
+            LevelLockHandler.registerLockKey(ItemStack.class, CadLockInheritanceKey.class);
+        else
+            LevelLockHandler.registerLockKey(ItemStack.class, CadLockNonInheritanceKey.class);
+
     }
 
     @Mod.EventHandler
