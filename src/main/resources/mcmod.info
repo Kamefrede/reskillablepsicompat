@@ -8,7 +8,7 @@
   "url": "",
   "updateUrl": "",
   "authorList": ["Kamefrede"],
-  "credits": "The guys over at PSI: Taurus Silver discord, Vazkii for making Skillable and PSI, wiresegal for yelling at me, the team behind Reskillable,
+  "credits": "The guys over at PSI: Taurus Silver discord, Vazkii for making Skillable and PSI, wiresegal for yelling at me, the team behind Reskillable",
   "logoFile": "",
   "screenshots": [],
   "dependencies": ["psi", "autoreglib", "reskillable"]
